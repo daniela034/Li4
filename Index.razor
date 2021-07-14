@@ -1,0 +1,104 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Components.Authorization;
+
+@inherits LayoutComponentBase
+
+@inject NavigationManager NavigationManager
+@inject UserManager<IdentityUser> _UserManager
+@inject RoleManager<IdentityRole> _RoleManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<p>@email</p>
+
+<MudText Typo="Typo.h4" Align="Align.Center" Style="padding-bottom: 125px;padding-top: 125px;">The Leading Tracking Solution</MudText>
+<MudGrid>
+    <MudItem xs="1" sm="1" md="1" Style="padding-bottom: 125px;" />
+    <MudItem xs="10" sm="10" md="10" Style="padding-bottom: 125px;">
+        <MudTextField @bind-Value="@_immediateText"
+                      Label="Insert Package Tracking ID"
+                      Variant="Variant.Outlined"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@Icons.Filled.Search"
+                      OnAdornmentClick="@ButtonTestclick"
+                      Immediate="true" />
+    </MudItem>
+    <MudItem xs="1" sm="1" md="1" Style="padding-bottom: 125px;" />
+    <MudItem xs="12" sm="6" md="4">
+        <div class="d-flex flex-row">
+            <MudAvatar Class="mud-elevation-25" Size="Size.Large">
+                <MudIcon Icon="@Icons.Custom.Brands.GitHub" Class="mx-4" />
+            </MudAvatar>
+            <div class="ml-6">
+                <MudText Typo="Typo.subtitle2">User 1</MudText>
+                <MudText Typo="Typo.body2">Comment #1</MudText>
+            </div>
+        </div>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <div class="d-flex flex-row">
+            <MudAvatar Class="mud-elevation-25" Size="Size.Large">
+                <MudIcon Icon="@Icons.Custom.Brands.GitHub" Class="mx-4" />
+            </MudAvatar>
+            <div class="ml-6">
+                <MudText Typo="Typo.subtitle2">User 2</MudText>
+                <MudText Typo="Typo.body2">Comment #2</MudText>
+            </div>
+        </div>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <div class="d-flex flex-row">
+            <MudAvatar Class="mud-elevation-25" Size="Size.Large">
+                <MudIcon Icon="@Icons.Custom.Brands.GitHub" Class="mx-4" />
+            </MudAvatar>
+            <div class="ml-6">
+                <MudText Typo="Typo.subtitle2">User 3</MudText>
+                <MudText Typo="Typo.body2">Comment #3</MudText>
+            </div>
+        </div>
+    </MudItem>
+
+    <MudItem xs="12" sm="6" md="3">
+    </MudItem>
+    <MudItem xs="12" sm="8">
+    </MudItem>
+    <MudItem xs="12" sm="4">
+    </MudItem>
+    <MudItem xs="12" sm="12" md="6">
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _immediateText;
+    private string email;
+    private string userAuthenticated;
+
+
+    void ButtonTestclick()
+    {
+        // redirect to OrderStatus
+        NavigationManager.NavigateTo("order_status/" + _immediateText);
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            userAuthenticated = $"{ user.Identity.Name} is authenticated.";
+            email = user.Identity.Name;
+        }
+        else
+        {
+            userAuthenticated = "The user is NOT authenticated.";
+            email = null;
+        }
+
+        if (email == "admin@tdelivery.com")
+        {
+            NavigationManager.NavigateTo("/admin/dashboard");
+        }
+    }
+}

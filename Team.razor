@@ -1,0 +1,35 @@
+﻿@page "/team"
+ 
+<div class="text-center style">
+    <h1>Meet our Team</h1>
+</div>
+
+<br>
+<br>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudGrid Spacing="@spacing" Justify="Justify.Center">
+            <MudItem>
+                <MudAvatar Image="/images/daniela.jpeg" Style="height:250px;width:250px;" Square=true />
+                <MudText Align="Align.Center" Typo="Typo.h6">Daniela Fernandes</MudText>
+            </MudItem>
+            <MudItem>
+                <MudAvatar Image="/images/jose.jpeg" Style="height:250px;width:250px;" Square=true />
+                <MudText Align="Align.Center" Typo="Typo.h6">José Gomes</MudText>
+            </MudItem>
+            <MudItem>
+                <MudAvatar Image="/images/rui.jpeg" Style="height:250px;width:250px;" Square=true />
+                <MudText Align="Align.Center" Typo="Typo.h6">Rui Fernandes</MudText>
+            </MudItem>
+            <MudItem>
+                <MudAvatar Image="/images/tiago.jpeg" Style="height:250px;width:250px;" Square=true />
+                <MudText Align="Align.Center" Typo="Typo.h6">Tiago Rodrigues</MudText>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public int spacing { get; set; } = 2;
+}

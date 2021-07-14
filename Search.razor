@@ -1,0 +1,40 @@
+﻿@page "/search"
+@using TDelivery.Data
+@inject NavigationManager NavManager;
+@inherits OwningComponentBase<EncomendaService>
+
+<div class="container col-12 text-center style">
+    <h5 class="mt-10">The Leading Tracking Solutions</h5>
+    <div class="row mt-10">
+            <div class="col-10">
+                <MudItem>
+                    <MudTextField @bind-Value="@_searchText"
+                                  Label=""
+                                  Variant="Variant.Outlined"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@Icons.Filled.Search" />
+                </MudItem>
+            </div>
+            <div class="col-2">
+                <MudButton Variant="Variant.Outlined" @onclick="@SearchEncomenda">Track</MudButton>
+            </div>
+    </div>
+</div>
+
+@code{
+    private string _searchText;
+    private Encomenda encomenda;
+
+    async Task SearchEncomenda()
+    {
+        //encomenda = await @Service.GetEncomenda(_searchText);
+        if (encomenda != null)
+        {
+            NavManager.NavigateTo("/encomenda/" + _searchText);
+        } else
+        {
+            NavManager.NavigateTo("/");
+        }
+    }
+
+}

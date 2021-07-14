@@ -1,0 +1,102 @@
+﻿@page "/order_status/"
+@page "/order_status/{order}"
+@using Newtonsoft.Json.Linq;
+
+<p>@JObject.Parse(response.Content.ReadAsStringAsync().Result)</p>
+
+@if (@JObject.Parse(response.Content.ReadAsStringAsync().Result)["data"] == null)
+{
+    <p> Null</p>
+}
+
+<br />
+<br />
+
+<div class="text-center style">
+    <h1> Tracking Stauts </h1>
+</div>
+<MudGrid>
+    <MudItem xs="3" sm="3" md="3" Style="padding-bottom: 125px;" />
+    <MudItem xs="6" sm="6" md="6" Style="padding-bottom: 125px;">
+        <MudPaper Class="d-flex pa-4">
+            Tracking ID: 111-111-11-111 <br />
+            Order ID: ffffffff-eeeee-sssss-ddddd <br />
+            Carrier: China Post <br />
+            Date: 1010-10-12 <br />
+            Status: Delivered <br />
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="3" sm="3" md="3" Style="padding-bottom: 125px;" />
+
+    <MudItem xs="2" sm="2" md="2" Style="padding-bottom: 125px;" />
+    <MudItem xs="8" sm="8" md="8" Style="padding-bottom: 125px;">
+        <MudCard>
+            <SfMaps>
+                <MapsLayers>
+                    <MapsLayer LayerType="ShapeLayerType.Bing" BingMapType="BingMapType.CanvasLight" Key="Ag1eM9GnSTW9Rv-BzomEc3havHa01JUWxmxQytQUqzBQQnZD54PxWDaTdRHy-ItX" TValue="string">
+                    </MapsLayer>
+                </MapsLayers>
+                @* Additionally map has been zoomed based on the center position *@
+                <MapsZoomSettings ZoomFactor="12"></MapsZoomSettings>
+                <MapsCenterPosition Latitude=Latitude Longitude=Longitude></MapsCenterPosition>
+            </SfMaps>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="2" sm="2" md="2" Style="padding-bottom: 125px;" />
+</MudGrid>
+
+@code {
+    [Parameter]
+    public String Order { get; set; }
+    private double Latitude { get; set; } = 38.7105; // default values (Lisbon)
+    private double Longitude { get; set; } = -9.1422;
+
+    public string apiKey = "6b4a3c51-1946-4eca-8245-72930435ff33";
+    private string basePath = "http://api.trackingmore.com";
+    private string apiVersion = "v3";
+    private string trackHeader = "Tracking-Api-Key";
+    private readonly HttpClient httpClient = new HttpClient();
+    private HttpResponseMessage response;
+
+    protected string getBaseUrl(string path)
+    {
+        return basePath + "/" + apiVersion + "/trackings/" + path;
+    }
+
+    private void doRequest(string path, string data = "", string method = "GET")
+    {
+        List<KeyValuePair<string, string>> headers = new List<KeyValuePair<string, string>>();
+        headers.Add(new KeyValuePair<string, string>(this.trackHeader, this.apiKey));
+
+        method = method.ToUpper();
+        this.Get(this.getBaseUrl(path), headers);
+    }
+
+    public void Get(string url, List<KeyValuePair<string, string>> headers = null)
+    {
+        HttpRequestMessage request = new HttpRequestMessage()
+        {
+            RequestUri = new Uri(url),
+            Method = HttpMethod.Get,
+        };
+
+        if (headers != null && headers.Count > 0)
+        {
+            request.Headers.Clear();
+
+            foreach (var header in headers)
+            {
+                request.Headers.Add(header.Key, header.Value);
+
+            }
+        }
+        response = httpClient.SendAsync(request).Result;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //doRequest("/get?tracking_numbers=" + Order);
+        //doRequest("/get");
+        doRequest("realtime", "{\"tracking_number\": \"EA152563254CN\", \"carrier_code\": \"china-ems\"}", "POST");
+    }
+} 

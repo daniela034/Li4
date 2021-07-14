@@ -1,0 +1,81 @@
+﻿@page "/contacts"
+@using Newtonsoft.Json.Linq;
+
+<div class="text-center style">
+    <h1> Courier Contacts </h1>
+</div>
+
+<br />
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Courier</th>
+            <th>Type</th>
+            <th>Phone</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var i in JObject.Parse(response.Content.ReadAsStringAsync().Result)["data"])
+        {
+            <tr>
+                <td>@i["courier_name"]</td>
+                <td>@i["courier_type"]</td>
+                <td>@i["courier_phone"]</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+    public string apiKey = "6b4a3c51-1946-4eca-8245-72930435ff33";
+    private string basePath = "http://api.trackingmore.com";
+    private string apiVersion = "v3";
+    private string trackHeader = "Tracking-Api-Key";
+    private readonly HttpClient httpClient = new HttpClient();
+    private HttpResponseMessage response;
+
+    protected string getBaseUrl(string path)
+    {
+        return basePath + "/" + apiVersion + "/trackings/" + path;
+    }
+
+    private void doRequest(string path, string data = "", string method = "GET")
+    {
+        List<KeyValuePair<string, string>> headers = new List<KeyValuePair<string, string>>();
+        headers.Add(new KeyValuePair<string, string>(this.trackHeader, this.apiKey));
+
+        method = method.ToUpper();
+        this.Get(this.getBaseUrl(path), headers);
+    }
+
+    public void Get(string url, List<KeyValuePair<string, string>> headers = null)
+    {
+        HttpRequestMessage request = new HttpRequestMessage()
+        {
+            RequestUri = new Uri(url),
+            Method = HttpMethod.Get,
+        };
+        if (headers != null && headers.Count > 0)
+        {
+            request.Headers.Clear();
+
+            foreach (var header in headers)
+            {
+                request.Headers.Add(header.Key, header.Value);
+
+            }
+        }
+
+        // HttpResponseMessage response = httpClient.SendAsync(request).Result;
+        // return response;
+        response = httpClient.SendAsync(request).Result;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        doRequest("courier");
+    }
+}

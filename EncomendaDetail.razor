@@ -1,0 +1,37 @@
+﻿@page "/encomenda/{trackingId}"
+@using TDelivery.Data
+@inject NavigationManager NavManager;
+@inherits OwningComponentBase<EncomendaService>
+
+<h1>Encomenda @TrackingId</h1>
+<h2>@Origem</h2>
+<h2>@Destino</h2>
+<h2>@Estado</h2>
+
+@code {
+    [Parameter]
+    public string TrackingId { get; set; }
+
+    public DateTime Data;
+    public string Origem, Destino, Estado;
+
+    public Encomenda encomenda;
+    async Task SearchEncomenda()
+    {
+        //encomenda = await @Service.GetEncomenda(TrackingId);
+        if (encomenda == null)
+        {
+            NavManager.NavigateTo("/Error");
+        }
+        else
+        {
+            Origem = encomenda.Origem;
+            Destino = encomenda.Destino;
+            Estado = encomenda.Estado;
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await SearchEncomenda();
+    }
+}
